@@ -31,6 +31,7 @@ Live site: https://jiawei-108-review-platform.wweden4.chatgpt.site
 
 - `public/data/question-bank-template.csv`
 - 轉換後範例：`public/data/question-bank.json`
+- Drive 索引：`public/data/drive-question-bank-index.json`
 
 ## 新增題目
 
@@ -60,6 +61,26 @@ npm run sources:index
 
 ```text
 public/data/public-source-index.json
+```
+
+## 索引 Google Drive 題庫資料夾
+
+使用者提供的 Drive 資料夾會被整理成索引，不會直接把出版社題庫內容重發佈到網站。
+
+```bash
+npm run drive:index
+```
+
+目前索引結果：
+
+- 翰林、康軒、南一題庫資料夾
+- 翰林、康軒、南一壓縮檔資料夾
+- 共 88 個資料夾、958 個檔案
+
+輸出：
+
+```text
+public/data/drive-question-bank-index.json
 ```
 
 ## 開發

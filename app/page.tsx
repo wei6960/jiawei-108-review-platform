@@ -54,6 +54,19 @@ const publicSources = [
     url: "/data/question-bank-template.csv",
     note: "老師或學生可用模板新增單元題、解析、標籤與授權資訊。",
   },
+  {
+    title: "Google Drive 出版社題庫索引",
+    publisher: "Drive folders",
+    url: "/data/drive-question-bank-index.json",
+    note: "已索引 88 個資料夾與 958 個檔案，包含翰林、康軒、南一 115 上題庫系統與壓縮檔。",
+  },
+];
+
+const driveSummaries = [
+  { publisher: "翰林", folderCount: 6, fileCount: 55, url: "https://drive.google.com/drive/folders/1Ea7fEvSqPZyJ2EKXW892y3sZlgPH84Zs?usp=drive_link" },
+  { publisher: "康軒", folderCount: 6, fileCount: 25, url: "https://drive.google.com/drive/folders/1Y9vIE9vlixQWWu81lII3NeOq0-T_Lqe8?usp=drive_link" },
+  { publisher: "南一", folderCount: 5, fileCount: 24, url: "https://drive.google.com/drive/folders/1cAjfllTfelrcf79b3tCP7YyZMM8xa4jM?usp=drive_link" },
+  { publisher: "壓縮檔", folderCount: 3, fileCount: 15, url: "/data/drive-question-bank-index.json" },
 ];
 
 const books: { id: BookId; label: string; scope: string }[] = [
@@ -563,6 +576,21 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <div className="drive-index-panel">
+          <div>
+            <p className="eyebrow">Drive Index</p>
+            <h3>已抓取你提供的 Drive 題庫清單</h3>
+            <p>這些資料夾多為出版社題庫系統與壓縮檔，不適合直接公開重發佈題目全文。平台先建立入口與檔案索引；若你確認擁有授權，可再把題目內容轉成 CSV 匯入平台。</p>
+          </div>
+          <div className="drive-summary-grid">
+            {driveSummaries.map((item) => (
+              <a href={item.url} key={item.publisher}>
+                <strong>{item.publisher}</strong>
+                <span>{item.folderCount} 個資料夾 · {item.fileCount} 個檔案</span>
+              </a>
+            ))}
+          </div>
+        </div>
         <div className="import-panel">
           <div>
             <p className="eyebrow">Question Format</p>
@@ -572,6 +600,7 @@ export default function Home() {
           <div className="import-actions">
             <a href="/data/question-bank-template.csv">下載 CSV 模板</a>
             <a href="/data/question-bank.json">查看示範題庫 JSON</a>
+            <a href="/data/drive-question-bank-index.json">查看 Drive 索引 JSON</a>
             <a href={githubUrl}>到 GitHub 貢獻題目</a>
           </div>
         </div>
