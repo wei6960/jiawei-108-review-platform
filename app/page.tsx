@@ -69,6 +69,14 @@ const driveSummaries = [
   { publisher: "壓縮檔", folderCount: 3, fileCount: 15, url: "/data/drive-question-bank-index.json" },
 ];
 
+const importedStats = [
+  { subject: "自然", count: 9231 },
+  { subject: "社會", count: 18331 },
+  { subject: "英文", count: 6344 },
+  { subject: "國文", count: 11974 },
+  { subject: "數學", count: 14417 },
+];
+
 const books: { id: BookId; label: string; scope: string }[] = [
   { id: "B1", label: "七上", scope: "國一上段考基礎" },
   { id: "B2", label: "七下", scope: "國一下延伸應用" },
@@ -369,7 +377,7 @@ export default function Home() {
           </div>
           <div className="hero-stats" aria-label="平台內容摘要">
             <span><strong>9</strong> 科題庫</span>
-            <span><strong>324</strong> 個單元層級</span>
+            <span><strong>60,297</strong> 題已匯入</span>
             <span><strong>每年</strong> 依會考更新</span>
           </div>
         </div>
@@ -579,8 +587,8 @@ export default function Home() {
         <div className="drive-index-panel">
           <div>
             <p className="eyebrow">Drive Index</p>
-            <h3>已抓取你提供的 Drive 題庫清單</h3>
-            <p>這些資料夾多為出版社題庫系統與壓縮檔，不適合直接公開重發佈題目全文。平台先建立入口與檔案索引；若你確認擁有授權，可再把題目內容轉成 CSV 匯入平台。</p>
+            <h3>已抓取 Drive 題庫並轉出康軒五科題目</h3>
+            <p>目前已從康軒 MDB 題庫解析 60,297 題，包含題目、選項、答案、詳解、難度、題型、冊次與單元。南一與翰林資料庫可用同一套流程繼續解析。</p>
           </div>
           <div className="drive-summary-grid">
             {driveSummaries.map((item) => (
@@ -588,6 +596,20 @@ export default function Home() {
                 <strong>{item.publisher}</strong>
                 <span>{item.folderCount} 個資料夾 · {item.fileCount} 個檔案</span>
               </a>
+            ))}
+          </div>
+        </div>
+        <div className="imported-bank-panel">
+          <div>
+            <p className="eyebrow">Imported Bank</p>
+            <h3>康軒 115 上題庫匯入統計</h3>
+          </div>
+          <div className="imported-stat-grid">
+            {importedStats.map((item) => (
+              <div key={item.subject}>
+                <strong>{item.count.toLocaleString("zh-TW")}</strong>
+                <span>{item.subject}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -601,6 +623,8 @@ export default function Home() {
             <a href="/data/question-bank-template.csv">下載 CSV 模板</a>
             <a href="/data/question-bank.json">查看示範題庫 JSON</a>
             <a href="/data/drive-question-bank-index.json">查看 Drive 索引 JSON</a>
+            <a href="/data/imported-drive-summary.json">查看匯入摘要 JSON</a>
+            <a href="/data/imported-drive-questions.json">下載完整 60,297 題 JSON</a>
             <a href={githubUrl}>到 GitHub 貢獻題目</a>
           </div>
         </div>

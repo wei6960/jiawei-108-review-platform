@@ -842,6 +842,48 @@ select {
   padding: 28px;
 }
 
+.imported-bank-panel {
+  align-items: center;
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 260px 1fr;
+  margin-top: 18px;
+  padding: 24px;
+}
+
+.imported-bank-panel h3 {
+  font-size: 28px;
+  margin-bottom: 0;
+}
+
+.imported-stat-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.imported-stat-grid div {
+  background: #f2eadc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-height: 78px;
+  padding: 12px;
+}
+
+.imported-stat-grid strong {
+  color: var(--green);
+  display: block;
+  font-size: 26px;
+}
+
+.imported-stat-grid span {
+  color: var(--muted);
+}
+
 .drive-index-panel h3 {
   font-size: 30px;
   margin-bottom: 10px;
@@ -1201,6 +1243,8 @@ footer p {
   .subject-rail,
   .source-grid,
   .drive-index-panel,
+  .imported-bank-panel,
+  .imported-stat-grid,
   .exam-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1267,6 +1311,8 @@ footer p {
   .import-panel,
   .drive-index-panel,
   .drive-summary-grid,
+  .imported-bank-panel,
+  .imported-stat-grid,
   .exam-grid,
   .progress-panel,
   footer {

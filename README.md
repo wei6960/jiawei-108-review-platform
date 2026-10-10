@@ -32,6 +32,8 @@ Live site: https://jiawei-108-review-platform.wweden4.chatgpt.site
 - `public/data/question-bank-template.csv`
 - 轉換後範例：`public/data/question-bank.json`
 - Drive 索引：`public/data/drive-question-bank-index.json`
+- 已解析題庫摘要：`public/data/imported-drive-summary.json`
+- 已解析完整題庫：`public/data/imported-drive-questions.json`
 
 ## 新增題目
 
@@ -82,6 +84,24 @@ npm run drive:index
 ```text
 public/data/drive-question-bank-index.json
 ```
+
+## 下載並解析 MDB 題庫
+
+不執行任何題庫 `.exe`，只下載 Google Drive 裡的 Access/MDB 資料庫並轉成 JSON。
+
+```bash
+npm run drive:download-mdb
+npm run drive:extract-mdb
+```
+
+目前已解析康軒 115 上五科：
+
+- 自然：9,231 題
+- 社會：18,331 題
+- 英文：6,344 題
+- 國文：11,974 題
+- 數學：14,417 題
+- 合計：60,297 題
 
 ## 開發
 

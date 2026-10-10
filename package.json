@@ -14,7 +14,9 @@
     "db:generate": "drizzle-kit generate",
     "questions:import": "node scripts/import-question-bank.mjs",
     "sources:index": "node scripts/index-public-sources.mjs",
-    "drive:index": "node scripts/index-drive-folders.mjs"
+    "drive:index": "node scripts/index-drive-folders.mjs",
+    "drive:download-mdb": "node scripts/download-drive-mdbs.mjs",
+    "drive:extract-mdb": "node scripts/extract-mdb-questions.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
@@ -34,6 +36,7 @@
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
+    "mdb-reader": "^3.2.0",
     "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
