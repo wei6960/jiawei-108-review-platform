@@ -23,17 +23,18 @@ async function render() {
   );
 }
 
-test("server-renders the Jiawei review platform shell", async () => {
+test("server-renders the deep unit review platform", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /<title>嘉偉 108 課綱複習平台<\/title>/i);
-  assert.match(html, /國中三年完整複習/);
-  assert.match(html, /學科題庫練習/);
-  assert.match(html, /會考專區/);
-  assert.match(html, /最新消息/);
+  assert.match(html, /深入每一冊/);
+  assert.match(html, /單元題庫練習/);
+  assert.match(html, /立即作答/);
+  assert.match(html, /看解析/);
+  assert.match(html, /會考與年度更新/);
   assert.match(html, /B1/);
   assert.match(html, /B6/);
   assert.match(html, /國文/);
@@ -41,7 +42,7 @@ test("server-renders the Jiawei review platform shell", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("keeps platform data and starter code aligned with the finished site", async () => {
+test("contains subject, book, unit, and quiz data for real practice", async () => {
   const [page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -56,14 +57,11 @@ test("keeps platform data and starter code aligned with the finished site", asyn
     assert.match(page, new RegExp(book));
   }
 
-  for (const version of ["翰林", "康軒", "南一"]) {
-    assert.match(page, new RegExp(version));
+  for (const feature of ["makeQuiz", "targets", "questionCount", "showAnalysis", "錯題", "段考"]) {
+    assert.match(page, new RegExp(feature));
   }
 
-  assert.match(page, /useState/);
-  assert.match(page, /activeSubject/);
-  assert.match(page, /updateItems/);
   assert.match(layout, /lang="zh-Hant-TW"/);
-  assert.match(layout, /國中三年 B1-B6 題庫練習/);
+  assert.match(layout, /單元題庫、段考練習/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });

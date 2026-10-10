@@ -2,221 +2,307 @@
 
 import { useMemo, useState } from "react";
 
+type BookId = "B1" | "B2" | "B3" | "B4" | "B5" | "B6";
+
+type Unit = {
+  title: string;
+  scope: string;
+  targets: string[];
+  skills: string[];
+  itemTypes: string[];
+  questionCount: number;
+  difficulty: "基礎" | "中等" | "進階" | "會考";
+};
+
 type Subject = {
   name: string;
   subtitle: string;
   accent: string;
   icon: string;
   versions: string[];
-  units: Record<string, string[]>;
-  examFocus: string;
-  questions: number;
   updated: string;
+  examFocus: string;
+  books: Record<BookId, Unit[]>;
 };
 
-const books = [
-  { id: "B1", label: "七上", scope: "基礎概念" },
-  { id: "B2", label: "七下", scope: "延伸應用" },
-  { id: "B3", label: "八上", scope: "圖表判讀" },
-  { id: "B4", label: "八下", scope: "跨域整合" },
-  { id: "B5", label: "九上", scope: "會考核心" },
-  { id: "B6", label: "九下", scope: "總複習" },
+type QuizItem = {
+  prompt: string;
+  choices: string[];
+  answer: number;
+  explanation: string;
+  tag: string;
+};
+
+const books: { id: BookId; label: string; scope: string }[] = [
+  { id: "B1", label: "七上", scope: "國一上段考基礎" },
+  { id: "B2", label: "七下", scope: "國一下延伸應用" },
+  { id: "B3", label: "八上", scope: "國二上核心觀念" },
+  { id: "B4", label: "八下", scope: "國二下整合題型" },
+  { id: "B5", label: "九上", scope: "國三上會考核心" },
+  { id: "B6", label: "九下", scope: "國三下總複習" },
 ];
+
+const baseSkills = {
+  language: ["概念辨識", "文本判讀", "題幹拆解", "選項比較", "段考手寫題", "會考素養題"],
+  math: ["公式理解", "計算熟練", "圖形判讀", "應用建模", "陷阱辨識", "混合題組"],
+  science: ["觀念理解", "實驗變因", "圖表判讀", "生活情境", "計算推理", "跨單元整合"],
+  social: ["關鍵詞判讀", "時序整理", "圖表判讀", "案例推論", "比較分析", "會考題組"],
+};
+
+function unit(title: string, scope: string, questionCount: number, difficulty: Unit["difficulty"], skills: string[]): Unit {
+  return {
+    title,
+    scope,
+    questionCount,
+    difficulty,
+    targets: [
+      `能說明「${title}」的核心觀念與常見考法`,
+      "能分辨題幹關鍵字、限制條件與干擾選項",
+      "能完成段考常見題型並寫出必要推論",
+      "能連結會考素養題中的生活或圖表情境",
+    ],
+    skills,
+    itemTypes: ["觀念快篩", "段考選擇題", "題組閱讀", "手寫/計算題", "錯題再練"],
+  };
+}
 
 const subjects: Subject[] = [
   {
     name: "國文",
-    subtitle: "閱讀素養、文言判讀、寫作策略",
+    subtitle: "閱讀素養、文言文、語文常識與作文",
     accent: "#9b6731",
     icon: "文",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["現代散文閱讀", "語文常識", "古典詩詞入門"],
-      B2: ["小說情節分析", "修辭辨識", "議論文結構"],
-      B3: ["文言文句讀", "人物形象", "閱讀策略"],
-      B4: ["古今文本比較", "圖文轉譯", "寫作取材"],
-      B5: ["會考閱讀題組", "國學常識", "混合題練習"],
-      B6: ["歷屆會考統整", "長文速讀", "作文審題"],
-    },
-    examFocus: "長文題組與跨文本比較比重提高",
-    questions: 1280,
     updated: "2026.10",
+    examFocus: "長文題組、跨文本比較、文言文語意判讀",
+    books: {
+      B1: ["現代散文閱讀", "新詩與韻文", "語文常識與標點", "修辭判讀", "文言文入門", "作文審題與取材"].map((x, i) => unit(x, "七上國文段考", 92 + i * 8, i > 3 ? "中等" : "基礎", baseSkills.language)),
+      B2: ["小說情節與人物", "說明文閱讀", "成語與詞語運用", "古典詩詞", "議論文架構", "作文段落安排"].map((x, i) => unit(x, "七下國文段考", 96 + i * 9, i > 2 ? "中等" : "基礎", baseSkills.language)),
+      B3: ["文言文句讀", "寓言與史傳", "閱讀策略", "語法與詞性", "圖文轉譯", "作文立意"].map((x, i) => unit(x, "八上國文段考", 110 + i * 8, i > 2 ? "進階" : "中等", baseSkills.language)),
+      B4: ["古今文本比較", "抒情文分析", "論說文判讀", "國學常識", "混合題組", "作文素材統整"].map((x, i) => unit(x, "八下國文段考", 118 + i * 7, i > 3 ? "進階" : "中等", baseSkills.language)),
+      B5: ["會考閱讀題組", "文言文翻譯", "長文速讀", "修辭與語感", "國學常識整合", "作文會考模擬"].map((x, i) => unit(x, "九上國文會考", 130 + i * 10, "會考", baseSkills.language)),
+      B6: ["歷屆試題回放", "跨文本比較", "弱點單元補強", "閱讀速度訓練", "作文範例拆解", "會考全真模擬"].map((x, i) => unit(x, "九下國文總複習", 138 + i * 10, "會考", baseSkills.language)),
+    },
   },
   {
     name: "英文",
-    subtitle: "單字文法、閱讀理解、生活情境",
+    subtitle: "單字文法、克漏字、閱讀理解與生活情境",
     accent: "#637f58",
     icon: "Aa",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["be 動詞與代名詞", "現在簡單式", "生活對話"],
-      B2: ["過去式", "比較級", "短文閱讀"],
-      B3: ["不定詞與動名詞", "連接詞", "圖表閱讀"],
-      B4: ["完成式", "關係子句", "篇章推論"],
-      B5: ["被動語態", "假設語氣", "會考克漏字"],
-      B6: ["歷屆閱讀題", "整合文法", "聽讀策略"],
-    },
-    examFocus: "情境閱讀與推論題穩定增加",
-    questions: 1460,
     updated: "2026.10",
+    examFocus: "篇章推論、文法整合、生活情境閱讀",
+    books: {
+      B1: ["be 動詞與代名詞", "現在簡單式", "名詞單複數", "疑問句", "生活對話", "短文閱讀"].map((x, i) => unit(x, "七上英文段考", 104 + i * 10, "基礎", baseSkills.language)),
+      B2: ["過去式", "助動詞", "比較級", "時間介系詞", "克漏字入門", "圖表閱讀"].map((x, i) => unit(x, "七下英文段考", 112 + i * 9, i > 2 ? "中等" : "基礎", baseSkills.language)),
+      B3: ["不定詞", "動名詞", "連接詞", "從屬子句", "閱讀推論", "篇章結構"].map((x, i) => unit(x, "八上英文段考", 124 + i * 9, "中等", baseSkills.language)),
+      B4: ["現在完成式", "關係代名詞", "被動語態", "間接問句", "長文閱讀", "混合文法"].map((x, i) => unit(x, "八下英文段考", 128 + i * 10, i > 2 ? "進階" : "中等", baseSkills.language)),
+      B5: ["分詞構句", "假設語氣", "會考克漏字", "閱讀測驗", "生活素養題", "聽讀策略"].map((x, i) => unit(x, "九上英文會考", 136 + i * 9, "會考", baseSkills.language)),
+      B6: ["歷屆閱讀題", "文法總整理", "高頻單字", "題組推論", "錯題文法補強", "會考全真模擬"].map((x, i) => unit(x, "九下英文總複習", 142 + i * 10, "會考", baseSkills.language)),
+    },
   },
   {
     name: "數學",
-    subtitle: "觀念拆解、題型演練、素養題",
+    subtitle: "觀念拆解、計算熟練、圖形推理與素養題",
     accent: "#c08a3d",
     icon: "∑",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["整數與分數", "一元一次方程式", "坐標平面"],
-      B2: ["二元一次聯立方程式", "比例", "線型函數"],
-      B3: ["乘法公式", "平方根", "畢氏定理"],
-      B4: ["因式分解", "二次方根", "統計圖表"],
-      B5: ["二次函數", "圓", "機率"],
-      B6: ["相似形", "三角比", "會考綜合題"],
-    },
-    examFocus: "圖表、幾何推理與多步驟運算是關鍵",
-    questions: 1720,
     updated: "2026.10",
+    examFocus: "多步驟運算、圖形證明、函數與統計圖表",
+    books: {
+      B1: ["整數與數線", "分數小數運算", "一元一次方程式", "比例與百分率", "坐標平面", "資料整理"].map((x, i) => unit(x, "七上數學段考", 118 + i * 11, i > 2 ? "中等" : "基礎", baseSkills.math)),
+      B2: ["二元一次聯立方程式", "直角坐標", "線型函數", "比與比例式", "幾何圖形", "統計圖表"].map((x, i) => unit(x, "七下數學段考", 126 + i * 11, "中等", baseSkills.math)),
+      B3: ["乘法公式", "多項式", "平方根", "畢氏定理", "因式分解入門", "生活應用題"].map((x, i) => unit(x, "八上數學段考", 134 + i * 12, i > 2 ? "進階" : "中等", baseSkills.math)),
+      B4: ["因式分解", "一元二次方程式", "等差數列", "幾何證明", "圓與角", "機率入門"].map((x, i) => unit(x, "八下數學段考", 138 + i * 12, "進階", baseSkills.math)),
+      B5: ["二次函數", "相似形", "圓的性質", "機率", "統計", "會考混合題"].map((x, i) => unit(x, "九上數學會考", 150 + i * 12, "會考", baseSkills.math)),
+      B6: ["三角比", "立體圖形", "函數總複習", "幾何總複習", "計算題補強", "會考全真模擬"].map((x, i) => unit(x, "九下數學總複習", 158 + i * 12, "會考", baseSkills.math)),
+    },
   },
   {
     name: "生物",
-    subtitle: "生命現象、遺傳、生態系統",
+    subtitle: "細胞、人體、遺傳、演化與生態",
     accent: "#557b5d",
     icon: "生",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["細胞構造", "養分與能量", "植物運輸"],
-      B2: ["神經與內分泌", "遺傳", "演化"],
-      B3: ["生態系", "環境變遷", "科學探究"],
-      B4: ["實驗變因", "資料判讀", "跨冊整合"],
-      B5: ["會考生物題組", "圖表推論", "生活應用"],
-      B6: ["自然科總複習", "混合題", "弱點補強"],
-    },
-    examFocus: "實驗設計與資料判讀題最需要反覆練",
-    questions: 920,
     updated: "2026.09",
+    examFocus: "實驗設計、圖表判讀、生命現象推論",
+    books: {
+      B1: ["細胞構造", "養分與能量", "植物運輸", "動物循環", "神經與內分泌", "恆定性"].map((x, i) => unit(x, "七上生物段考", 86 + i * 8, i > 2 ? "中等" : "基礎", baseSkills.science)),
+      B2: ["生殖", "遺傳法則", "演化", "分類", "生態系", "環境變遷"].map((x, i) => unit(x, "七下生物段考", 90 + i * 8, i > 2 ? "進階" : "中等", baseSkills.science)),
+      B3: ["實驗變因", "顯微鏡判讀", "資料圖表", "探究設計", "跨冊整合", "段考題組"].map((x, i) => unit(x, "八上生物複習", 78 + i * 7, "中等", baseSkills.science)),
+      B4: ["人體系統整合", "遺傳圖譜", "生態能量流", "環境議題", "混合題組", "素養題"].map((x, i) => unit(x, "八下生物複習", 82 + i * 8, "進階", baseSkills.science)),
+      B5: ["會考生物題組", "實驗題", "圖表推論", "生活應用", "弱點補強", "自然科整合"].map((x, i) => unit(x, "九上生物會考", 94 + i * 8, "會考", baseSkills.science)),
+      B6: ["歷屆生物題", "核心觀念回放", "錯題分類", "跨單元整合", "圖表快解", "會考全真模擬"].map((x, i) => unit(x, "九下生物總複習", 102 + i * 8, "會考", baseSkills.science)),
+    },
   },
   {
     name: "理化",
-    subtitle: "物質、能量、力與化學反應",
+    subtitle: "物質、化學反應、力、光、電與能量",
     accent: "#4b7d86",
-    icon: "H₂",
+    icon: "H2",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["基本測量", "物質三態", "密度"],
-      B2: ["波動與聲音", "光", "熱"],
-      B3: ["原子與分子", "化學反應", "酸鹼鹽"],
-      B4: ["力與運動", "功與能", "電與磁"],
-      B5: ["氧化還原", "有機化合物", "實驗推論"],
-      B6: ["自然科整合", "計算題", "會考模擬"],
-    },
-    examFocus: "實驗圖、計算與生活情境整合題是主軸",
-    questions: 1180,
     updated: "2026.10",
+    examFocus: "實驗圖、計算題、生活情境整合",
+    books: {
+      B1: ["基本測量", "密度", "物質三態", "溶液濃度", "熱與溫度", "科學方法"].map((x, i) => unit(x, "七上理化段考", 92 + i * 9, i > 2 ? "中等" : "基礎", baseSkills.science)),
+      B2: ["聲音", "光的反射", "光的折射", "力的作用", "壓力", "浮力"].map((x, i) => unit(x, "七下理化段考", 102 + i * 9, "中等", baseSkills.science)),
+      B3: ["原子與分子", "化學式", "化學反應", "酸鹼鹽", "氧化還原", "反應速率"].map((x, i) => unit(x, "八上理化段考", 116 + i * 9, i > 2 ? "進階" : "中等", baseSkills.science)),
+      B4: ["運動", "牛頓定律", "功與能", "電流電壓", "電阻", "磁與電磁"].map((x, i) => unit(x, "八下理化段考", 124 + i * 10, "進階", baseSkills.science)),
+      B5: ["有機化合物", "能源", "波動", "實驗設計", "會考計算題", "自然科混合題"].map((x, i) => unit(x, "九上理化會考", 132 + i * 10, "會考", baseSkills.science)),
+      B6: ["歷屆理化題", "公式總整理", "實驗圖判讀", "計算弱點補強", "跨單元整合", "會考全真模擬"].map((x, i) => unit(x, "九下理化總複習", 140 + i * 10, "會考", baseSkills.science)),
+    },
   },
   {
     name: "歷史",
-    subtitle: "臺灣史、中國史、世界史",
+    subtitle: "臺灣史、中國史、世界史與史料判讀",
     accent: "#8a6b48",
     icon: "史",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["史前與原住民族", "荷西明鄭", "清領臺灣"],
-      B2: ["日治臺灣", "戰後臺灣", "民主化"],
-      B3: ["古代中國", "秦漢到隋唐", "宋元明清"],
-      B4: ["近代中國", "世界古文明", "歐洲近代"],
-      B5: ["世界大戰", "冷戰", "全球化"],
-      B6: ["時序判讀", "史料分析", "會考題組"],
-    },
-    examFocus: "史料閱讀與時間軸排序題持續重要",
-    questions: 860,
     updated: "2026.08",
+    examFocus: "史料閱讀、時間軸排序、因果關係",
+    books: {
+      B1: ["史前與原住民族", "荷西與明鄭", "清領臺灣", "日治臺灣", "戰後臺灣", "民主化"].map((x, i) => unit(x, "七上歷史段考", 80 + i * 7, i > 2 ? "中等" : "基礎", baseSkills.social)),
+      B2: ["古代中國", "秦漢帝國", "魏晉南北朝", "隋唐盛世", "宋元變遷", "明清發展"].map((x, i) => unit(x, "七下歷史段考", 86 + i * 7, "中等", baseSkills.social)),
+      B3: ["近代中國", "清末改革", "民國建立", "世界古文明", "希臘羅馬", "宗教與文化"].map((x, i) => unit(x, "八上歷史段考", 92 + i * 7, "中等", baseSkills.social)),
+      B4: ["歐洲近代", "工業革命", "帝國主義", "世界大戰", "冷戰", "全球化"].map((x, i) => unit(x, "八下歷史段考", 98 + i * 8, i > 2 ? "進階" : "中等", baseSkills.social)),
+      B5: ["史料題組", "時序判讀", "比較題", "臺灣史總複習", "中國史總複習", "世界史總複習"].map((x, i) => unit(x, "九上歷史會考", 104 + i * 8, "會考", baseSkills.social)),
+      B6: ["歷屆歷史題", "年代軸整理", "人物事件配對", "因果推論", "錯題補強", "會考全真模擬"].map((x, i) => unit(x, "九下歷史總複習", 110 + i * 8, "會考", baseSkills.social)),
+    },
   },
   {
     name: "地理",
-    subtitle: "地形氣候、產業人口、區域比較",
+    subtitle: "地圖、氣候、人口產業與區域比較",
     accent: "#5e7c71",
     icon: "地",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["地圖判讀", "臺灣地形", "臺灣氣候"],
-      B2: ["人口與產業", "區域特色", "環境議題"],
-      B3: ["中國地理", "東亞與東南亞", "南亞西亞"],
-      B4: ["歐洲非洲", "美洲大洋洲", "全球議題"],
-      B5: ["圖表分析", "區域比較", "會考題組"],
-      B6: ["跨冊整合", "環境永續", "模擬測驗"],
-    },
-    examFocus: "地圖、氣候圖與統計圖的判讀要熟",
-    questions: 910,
     updated: "2026.09",
+    examFocus: "地圖、氣候圖、統計圖與區域比較",
+    books: {
+      B1: ["地圖判讀", "臺灣地形", "臺灣氣候", "人口分布", "產業活動", "環境議題"].map((x, i) => unit(x, "七上地理段考", 84 + i * 7, i > 2 ? "中等" : "基礎", baseSkills.social)),
+      B2: ["中國地形", "中國氣候", "東亞", "東南亞", "南亞", "西亞北非"].map((x, i) => unit(x, "七下地理段考", 90 + i * 7, "中等", baseSkills.social)),
+      B3: ["歐洲", "非洲", "北美洲", "中南美洲", "大洋洲", "兩極地區"].map((x, i) => unit(x, "八上地理段考", 96 + i * 7, "中等", baseSkills.social)),
+      B4: ["全球化", "都市化", "資源與能源", "災害與防治", "環境永續", "區域比較"].map((x, i) => unit(x, "八下地理段考", 102 + i * 8, i > 2 ? "進階" : "中等", baseSkills.social)),
+      B5: ["地圖題組", "氣候圖判讀", "統計圖判讀", "產業比較", "環境素養題", "會考整合題"].map((x, i) => unit(x, "九上地理會考", 108 + i * 8, "會考", baseSkills.social)),
+      B6: ["歷屆地理題", "臺灣總複習", "世界區域總複習", "圖表快解", "錯題補強", "會考全真模擬"].map((x, i) => unit(x, "九下地理總複習", 114 + i * 8, "會考", baseSkills.social)),
+    },
   },
   {
     name: "公民",
-    subtitle: "法律制度、民主政治、經濟生活",
+    subtitle: "民主政治、法律制度、經濟與公共議題",
     accent: "#90764f",
     icon: "法",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["自我與家庭", "社會規範", "人權"],
-      B2: ["民主政治", "地方自治", "公共參與"],
-      B3: ["法律責任", "少年事件", "消費權益"],
-      B4: ["市場經濟", "政府職能", "全球公民"],
-      B5: ["時事素養題", "案例判讀", "會考題組"],
-      B6: ["法政經總複習", "混合題", "命題趨勢"],
-    },
-    examFocus: "情境案例與時事概念連結更常出現",
-    questions: 840,
     updated: "2026.10",
+    examFocus: "情境案例、法律責任、經濟概念與時事連結",
+    books: {
+      B1: ["自我與家庭", "社會規範", "人權", "性別平等", "公共參與", "媒體識讀"].map((x, i) => unit(x, "七上公民段考", 78 + i * 7, i > 2 ? "中等" : "基礎", baseSkills.social)),
+      B2: ["民主政治", "選舉制度", "地方自治", "中央政府", "政黨與利益團體", "公民參與"].map((x, i) => unit(x, "七下公民段考", 84 + i * 7, "中等", baseSkills.social)),
+      B3: ["法律基本概念", "民事責任", "刑事責任", "少年事件", "消費權益", "智慧財產權"].map((x, i) => unit(x, "八上公民段考", 92 + i * 7, i > 2 ? "進階" : "中等", baseSkills.social)),
+      B4: ["市場經濟", "供需與價格", "政府職能", "租稅", "國際貿易", "全球公民"].map((x, i) => unit(x, "八下公民段考", 98 + i * 8, "進階", baseSkills.social)),
+      B5: ["法政經總整理", "案例判讀", "時事素養題", "會考題組", "錯題補強", "混合模擬"].map((x, i) => unit(x, "九上公民會考", 104 + i * 8, "會考", baseSkills.social)),
+      B6: ["歷屆公民題", "法律案例", "政治制度", "經濟概念", "公共議題", "會考全真模擬"].map((x, i) => unit(x, "九下公民總複習", 110 + i * 8, "會考", baseSkills.social)),
+    },
   },
   {
     name: "地科",
-    subtitle: "地球系統、天文、天然災害",
+    subtitle: "地球系統、天文、天氣、海洋與災害",
     accent: "#677a97",
     icon: "◎",
     versions: ["翰林", "康軒", "南一"],
-    units: {
-      B1: ["地球內部", "板塊運動", "岩石循環"],
-      B2: ["大氣與天氣", "海洋", "水循環"],
-      B3: ["太陽系", "月相與潮汐", "宇宙觀測"],
-      B4: ["天然災害", "氣候變遷", "能源資源"],
-      B5: ["圖表判讀", "實測資料", "會考整合"],
-      B6: ["自然科總複習", "跨單元題", "模擬測驗"],
-    },
-    examFocus: "天文週期與災害資料判讀適合用題組練習",
-    questions: 760,
     updated: "2026.09",
+    examFocus: "天文週期、天氣圖、災害資料與地球系統",
+    books: {
+      B1: ["地球內部", "板塊運動", "岩石循環", "地震", "火山", "地質災害"].map((x, i) => unit(x, "七上地科段考", 76 + i * 7, i > 2 ? "中等" : "基礎", baseSkills.science)),
+      B2: ["大氣組成", "天氣變化", "鋒面與颱風", "水循環", "海洋", "氣候變遷"].map((x, i) => unit(x, "七下地科段考", 84 + i * 7, "中等", baseSkills.science)),
+      B3: ["太陽系", "月相", "潮汐", "日月食", "星空觀測", "宇宙尺度"].map((x, i) => unit(x, "八上地科段考", 90 + i * 7, i > 2 ? "進階" : "中等", baseSkills.science)),
+      B4: ["天然資源", "能源轉型", "環境變遷", "災害防治", "資料判讀", "跨域議題"].map((x, i) => unit(x, "八下地科段考", 96 + i * 8, "進階", baseSkills.science)),
+      B5: ["天文題組", "天氣圖判讀", "地震資料", "氣候圖表", "自然科整合", "會考素養題"].map((x, i) => unit(x, "九上地科會考", 102 + i * 8, "會考", baseSkills.science)),
+      B6: ["歷屆地科題", "地球系統總複習", "天文總複習", "圖表快解", "錯題補強", "會考全真模擬"].map((x, i) => unit(x, "九下地科總複習", 108 + i * 8, "會考", baseSkills.science)),
+    },
   },
 ];
 
-const updateItems = [
-  { type: "年度更新", title: "115 年會考命題趨勢預備版上線", date: "2026.10.10" },
-  { type: "題庫新增", title: "B5 九上理化與公民新增素養題 180 題", date: "2026.10.02" },
-  { type: "版本對照", title: "翰林、康軒、南一 B1-B6 單元索引完成校正", date: "2026.09.21" },
-  { type: "會考專區", title: "歷屆試題弱點標籤與解析重整", date: "2026.09.05" },
-];
-
-const examCards = [
-  { title: "歷屆試題", detail: "依年份、科目、能力指標快速回放" },
-  { title: "模擬測驗", detail: "混合冊次與版本，產生 45 分鐘練習卷" },
-  { title: "錯題整理", detail: "自動標記弱點單元，安排複習節奏" },
-  { title: "趨勢分析", detail: "每年更新題型比重與高頻概念" },
-];
+function makeQuiz(subject: Subject, book: BookId, unitData: Unit): QuizItem[] {
+  const context = `${subject.name} ${book} ${unitData.title}`;
+  return [
+    {
+      tag: "觀念快篩",
+      prompt: `段考前複習「${context}」時，第一步最適合先確認哪一件事？`,
+      choices: ["背完所有題目答案", "整理核心觀念與易混淆概念", "只寫最難題", "跳過課本例題"],
+      answer: 1,
+      explanation: "單元練習要先穩住核心觀念，再進入題型變化，錯題才知道要補哪個概念。",
+    },
+    {
+      tag: "題幹拆解",
+      prompt: `遇到「${unitData.title}」題組時，哪個動作最能降低粗心失分？`,
+      choices: ["先看選項再猜", "圈出關鍵字、條件與問法", "只看最後一句", "寫越快越好"],
+      answer: 1,
+      explanation: "段考題常用限制條件設陷阱，先拆題幹可以避免把題目問法看錯。",
+    },
+    {
+      tag: "段考應用",
+      prompt: `如果學生在「${unitData.title}」連錯三題，平台應該優先安排什麼？`,
+      choices: ["直接進入下一冊", "回到同單元基礎題與解析", "只顯示分數", "改練其他科"],
+      answer: 1,
+      explanation: "同單元連錯代表觀念或題型尚未穩定，應先補基礎題，再做進階混合題。",
+    },
+    {
+      tag: "素養題",
+      prompt: `會考素養題把「${unitData.title}」放進生活情境時，最重要的是什麼？`,
+      choices: ["只找題目中的數字", "把情境轉回課本概念", "忽略圖表", "直接套最近背的答案"],
+      answer: 1,
+      explanation: "素養題不是脫離課本，而是把課本概念換成生活、圖表或文本情境來問。",
+    },
+    {
+      tag: "錯題整理",
+      prompt: `完成「${context}」練習後，錯題最應該用哪種方式保存？`,
+      choices: ["只記題號", "標記錯因、單元、題型與下次複習日", "刪掉錯題", "只看正確答案"],
+      answer: 1,
+      explanation: "錯題要能回推弱點，標籤化後才能安排下次複習與段考前衝刺。",
+    },
+  ];
+}
 
 export default function Home() {
-  const [activeBook, setActiveBook] = useState("B1");
+  const [activeBook, setActiveBook] = useState<BookId>("B1");
   const [activeSubject, setActiveSubject] = useState(subjects[0].name);
   const [activeVersion, setActiveVersion] = useState("翰林");
-  const [practiceMode, setPracticeMode] = useState("單元練習");
+  const [unitIndex, setUnitIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const subject = useMemo(
     () => subjects.find((item) => item.name === activeSubject) ?? subjects[0],
     [activeSubject],
   );
+  const units = subject.books[activeBook];
+  const activeUnit = units[Math.min(unitIndex, units.length - 1)];
+  const quiz = useMemo(() => makeQuiz(subject, activeBook, activeUnit), [subject, activeBook, activeUnit]);
+  const answeredCount = Object.keys(answers).length;
+  const correctCount = quiz.filter((item, index) => answers[index] === item.answer).length;
+  const totalQuestions = units.reduce((sum, item) => sum + item.questionCount, 0);
 
-  const units = subject.units[activeBook] ?? [];
-  const questionEstimate = Math.round(
-    subject.questions * (0.12 + books.findIndex((book) => book.id === activeBook) * 0.018),
-  );
+  function switchSubject(name: string) {
+    const next = subjects.find((item) => item.name === name) ?? subjects[0];
+    setActiveSubject(name);
+    setActiveVersion(next.versions[0]);
+    setUnitIndex(0);
+    setAnswers({});
+    setShowAnalysis(false);
+  }
+
+  function switchBook(book: BookId) {
+    setActiveBook(book);
+    setUnitIndex(0);
+    setAnswers({});
+    setShowAnalysis(false);
+  }
+
+  function selectUnit(index: number) {
+    setUnitIndex(index);
+    setAnswers({});
+    setShowAnalysis(false);
+  }
 
   return (
     <main>
@@ -225,9 +311,9 @@ export default function Home() {
           <img src="/jiawei-logo.png" alt="" />
         </a>
         <div className="navlinks">
-          <a href="#practice">題庫練習</a>
+          <a href="#practice">單元題庫</a>
+          <a href="#quiz">立即作答</a>
           <a href="#exam">會考專區</a>
-          <a href="#books">B1-B6</a>
           <a href="#updates">年度更新</a>
         </div>
         <button className="login-button" type="button">登入 / 註冊</button>
@@ -236,31 +322,31 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow">108 課綱複習平台</p>
-          <h1>國中三年完整複習，陪你穩穩迎戰會考</h1>
+          <h1>不只選科目，而是深入每一冊、每一個段考單元</h1>
           <p className="hero-text">
-            依各版本、各冊次與各科單元整理題庫，從 B1 到 B6 補齊觀念、練熟題型，並依每年會考趨勢持續更新。
+            依版本、冊次、單元、題型與弱點標籤建立練習。學生可先看單元重點，再進入題庫作答、看解析、整理錯題，適合段考前逐單元複習。
           </p>
           <div className="hero-actions">
-            <a className="primary-action" href="#practice">開始練習</a>
-            <a className="secondary-action" href="#exam">查看會考專區</a>
+            <a className="primary-action" href="#practice">選擇單元</a>
+            <a className="secondary-action" href="#quiz">開始作答</a>
           </div>
-          <div className="hero-stats" aria-label="平台特色">
-            <span><strong>9</strong> 科完整題庫</span>
-            <span><strong>B1-B6</strong> 全冊複習</span>
-            <span><strong>每年</strong> 趨勢更新</span>
+          <div className="hero-stats" aria-label="平台內容摘要">
+            <span><strong>9</strong> 科題庫</span>
+            <span><strong>324</strong> 個單元層級</span>
+            <span><strong>每年</strong> 依會考更新</span>
           </div>
         </div>
-        <div className="hero-panel" aria-label="今日複習摘要">
+        <div className="hero-panel" aria-label="目前練習摘要">
           <div className="study-card main-study-card">
-            <p>今日建議</p>
-            <h2>{activeSubject} {activeBook} 題組</h2>
-            <span>{activeVersion}版本 · {units[0]}</span>
+            <p>目前練習</p>
+            <h2>{subject.name} {activeBook} · {activeUnit.title}</h2>
+            <span>{activeVersion}版 · {activeUnit.questionCount} 題 · {activeUnit.difficulty}</span>
           </div>
           <div className="mini-grid">
-            <div><strong>75%</strong><span>整體進度</span></div>
-            <div><strong>128</strong><span>本週練習題</span></div>
-            <div><strong>23</strong><span>弱點待補強</span></div>
-            <div><strong>12</strong><span>連續學習天</span></div>
+            <div><strong>{units.length}</strong><span>本冊單元</span></div>
+            <div><strong>{totalQuestions}</strong><span>本冊題量</span></div>
+            <div><strong>{answeredCount}/5</strong><span>已作答</span></div>
+            <div><strong>{correctCount}</strong><span>目前答對</span></div>
           </div>
         </div>
       </section>
@@ -268,7 +354,7 @@ export default function Home() {
       <section className="book-strip" id="books" aria-label="冊次切換">
         <div>
           <p>國中三年完整複習</p>
-          <h2>B1 - B6 全冊掌握</h2>
+          <h2>B1 - B6 逐冊段考題庫</h2>
         </div>
         <div className="book-tabs" role="tablist" aria-label="選擇冊次">
           {books.map((book) => (
@@ -276,7 +362,7 @@ export default function Home() {
               aria-selected={activeBook === book.id}
               className={activeBook === book.id ? "active" : ""}
               key={book.id}
-              onClick={() => setActiveBook(book.id)}
+              onClick={() => switchBook(book.id)}
               role="tab"
               type="button"
             >
@@ -290,80 +376,148 @@ export default function Home() {
       <section className="section" id="practice">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Subject Practice</p>
-            <h2>學科題庫練習</h2>
+            <p className="eyebrow">Unit Practice</p>
+            <h2>單元題庫練習</h2>
           </div>
-          <p>先選科目，再依版本、冊次與單元建立練習卷；未來新增題庫時只要更新資料表，就能同步調整內容。</p>
+          <p>每科每冊不只列標題，而是拆成單元目標、子技能、段考題型、題量與難度。未來題庫擴充時，可直接把單元資料接到後台更新。</p>
         </div>
 
-        <div className="practice-layout">
-          <div className="subject-grid" aria-label="科目列表">
-            {subjects.map((item) => (
-              <button
-                className={`subject-card ${activeSubject === item.name ? "selected" : ""}`}
-                key={item.name}
-                onClick={() => {
-                  setActiveSubject(item.name);
-                  setActiveVersion(item.versions[0]);
-                }}
-                style={{ "--accent": item.accent } as React.CSSProperties}
-                type="button"
-              >
-                <span className="subject-icon">{item.icon}</span>
-                <strong>{item.name}</strong>
-                <small>{item.subtitle}</small>
-                <em>{item.questions.toLocaleString("zh-TW")} 題</em>
-              </button>
-            ))}
-          </div>
+        <div className="subject-rail" aria-label="科目選擇">
+          {subjects.map((item) => (
+            <button
+              className={activeSubject === item.name ? "active" : ""}
+              key={item.name}
+              onClick={() => switchSubject(item.name)}
+              style={{ "--accent": item.accent } as React.CSSProperties}
+              type="button"
+            >
+              <span>{item.icon}</span>
+              {item.name}
+            </button>
+          ))}
+        </div>
 
-          <aside className="builder" aria-label="練習設定">
-            <div className="builder-top">
-              <span style={{ background: subject.accent }}>{subject.icon}</span>
+        <div className="practice-deep-layout">
+          <aside className="unit-browser" aria-label="單元列表">
+            <div className="unit-browser-head">
               <div>
-                <p>{activeBook} · {books.find((book) => book.id === activeBook)?.label}</p>
-                <h3>{subject.name}練習卷</h3>
+                <p>{activeVersion}版 · {books.find((book) => book.id === activeBook)?.scope}</p>
+                <h3>{subject.name} {activeBook} 單元</h3>
               </div>
-            </div>
-
-            <label>
-              教材版本
-              <select value={activeVersion} onChange={(event) => setActiveVersion(event.target.value)}>
+              <select value={activeVersion} onChange={(event) => setActiveVersion(event.target.value)} aria-label="教材版本">
                 {subject.versions.map((version) => (
                   <option key={version}>{version}</option>
                 ))}
               </select>
-            </label>
-
-            <div className="mode-group" aria-label="練習模式">
-              {["單元練習", "混合題組", "會考模擬"].map((mode) => (
+            </div>
+            <div className="unit-stack">
+              {units.map((item, index) => (
                 <button
-                  className={practiceMode === mode ? "active" : ""}
-                  key={mode}
-                  onClick={() => setPracticeMode(mode)}
+                  className={index === unitIndex ? "active" : ""}
+                  key={item.title}
+                  onClick={() => selectUnit(index)}
                   type="button"
                 >
-                  {mode}
-                </button>
-              ))}
-            </div>
-
-            <div className="unit-list">
-              <p>本冊單元</p>
-              {units.map((unit, index) => (
-                <button key={unit} type="button">
                   <span>{String(index + 1).padStart(2, "0")}</span>
-                  {unit}
+                  <strong>{item.title}</strong>
+                  <small>{item.questionCount} 題 · {item.difficulty}</small>
                 </button>
               ))}
-            </div>
-
-            <div className="builder-summary">
-              <span>預估可練習題數</span>
-              <strong>{questionEstimate}</strong>
-              <small>{activeVersion}版 · {practiceMode} · {subject.updated} 更新</small>
             </div>
           </aside>
+
+          <section className="unit-deep" aria-label="單元深度內容">
+            <div className="unit-title-row">
+              <div>
+                <p className="eyebrow">{subject.name} · {activeBook} · {activeVersion}版</p>
+                <h2>{activeUnit.title}</h2>
+                <p>{activeUnit.scope}，題庫包含基礎觀念、段考題、手寫題與會考素養題。</p>
+              </div>
+              <div className="unit-count">
+                <strong>{activeUnit.questionCount}</strong>
+                <span>題可練</span>
+              </div>
+            </div>
+
+            <div className="deep-grid">
+              <article>
+                <h3>學習目標</h3>
+                {activeUnit.targets.map((target) => <p key={target}>{target}</p>)}
+              </article>
+              <article>
+                <h3>子技能拆解</h3>
+                <div className="chip-list">
+                  {activeUnit.skills.map((skill) => <span key={skill}>{skill}</span>)}
+                </div>
+              </article>
+              <article>
+                <h3>題型配置</h3>
+                <div className="chip-list">
+                  {activeUnit.itemTypes.map((type) => <span key={type}>{type}</span>)}
+                </div>
+              </article>
+              <article>
+                <h3>段考策略</h3>
+                <p>先做 10 題觀念快篩，低於 80% 就回到基礎題；達標後再練題組與手寫題，最後收進錯題本。</p>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section className="quiz-section" id="quiz">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Practice Now</p>
+            <h2>立即作答 · 看解析</h2>
+          </div>
+          <p>這裡先放入可操作的示範題型。正式上題庫時，同一個作答流程可以接真題、段考題、歷屆會考題與老師自建題。</p>
+        </div>
+        <div className="quiz-board">
+          <div className="quiz-status">
+            <strong>{correctCount} / {quiz.length}</strong>
+            <span>{subject.name} · {activeUnit.title}</span>
+            <button type="button" onClick={() => setShowAnalysis(true)}>交卷看解析</button>
+            <button type="button" onClick={() => { setAnswers({}); setShowAnalysis(false); }}>重新練習</button>
+          </div>
+          <div className="question-list">
+            {quiz.map((item, index) => {
+              const selected = answers[index];
+              const isCorrect = selected === item.answer;
+              return (
+                <article className="question-card" key={item.prompt}>
+                  <div className="question-head">
+                    <span>{item.tag}</span>
+                    <strong>第 {index + 1} 題</strong>
+                  </div>
+                  <p>{item.prompt}</p>
+                  <div className="choice-grid">
+                    {item.choices.map((choice, choiceIndex) => (
+                      <button
+                        className={[
+                          selected === choiceIndex ? "selected" : "",
+                          showAnalysis && choiceIndex === item.answer ? "correct" : "",
+                          showAnalysis && selected === choiceIndex && selected !== item.answer ? "wrong" : "",
+                        ].join(" ")}
+                        key={choice}
+                        onClick={() => setAnswers((prev) => ({ ...prev, [index]: choiceIndex }))}
+                        type="button"
+                      >
+                        {String.fromCharCode(65 + choiceIndex)}. {choice}
+                      </button>
+                    ))}
+                  </div>
+                  {showAnalysis && (
+                    <div className={isCorrect ? "analysis correct" : "analysis"}>
+                      <strong>{isCorrect ? "答對了" : "需要再練一次"}</strong>
+                      <span>正解：{String.fromCharCode(65 + item.answer)}</span>
+                      <p>{item.explanation}</p>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -371,44 +525,49 @@ export default function Home() {
         <div className="section-heading">
           <div>
             <p className="eyebrow">Exam Center</p>
-            <h2>會考專區</h2>
+            <h2>會考與年度更新</h2>
           </div>
-          <p>搭配每年命題狀況調整題目標籤、難度與解析，讓複習不只是刷題，而是看見自己下一步要補哪裡。</p>
+          <p>每年依會考題型、命題趨勢與出版社版本異動更新。段考練單元，會考練整合，兩種模式分開追蹤。</p>
         </div>
         <div className="exam-grid">
-          {examCards.map((card) => (
-            <article className="exam-card" key={card.title}>
+          {["歷屆會考題", "段考範圍卷", "弱點錯題本", "年度趨勢分析"].map((title) => (
+            <article className="exam-card" key={title}>
               <span>→</span>
-              <h3>{card.title}</h3>
-              <p>{card.detail}</p>
+              <h3>{title}</h3>
+              <p>{title}會依科目、冊次、單元與能力指標標記，方便老師與學生快速安排複習。</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="dashboard-section">
+      <section className="dashboard-section" id="updates">
         <article className="progress-panel">
-          <div className="ring" aria-label="整體進度 75%">75%</div>
+          <div className="ring" aria-label="目前正確率">{answeredCount ? Math.round((correctCount / answeredCount) * 100) : 0}%</div>
           <div>
             <p className="eyebrow">My Progress</p>
-            <h2>我的學習進度</h2>
-            <p>本週已完成 18 / 24 份練習，最需要補強的是「{subject.examFocus}」。</p>
+            <h2>單元練習進度</h2>
+            <p>目前單元：{subject.name} {activeBook}「{activeUnit.title}」。會考重點：{subject.examFocus}。</p>
           </div>
         </article>
-        <article className="updates-panel" id="updates">
+        <article className="updates-panel">
           <div className="panel-title">
             <div>
               <p className="eyebrow">Updates</p>
-              <h2>最新消息 · 年度更新</h2>
+              <h2>資料更新規劃</h2>
             </div>
-            <a href="#practice">立即練習</a>
+            <a href="#practice">回到單元</a>
           </div>
           <div className="update-list">
-            {updateItems.map((item) => (
-              <div key={item.title}>
-                <span>{item.type}</span>
-                <strong>{item.title}</strong>
-                <time>{item.date}</time>
+            {[
+              ["年度更新", "115 年會考趨勢標籤：依新題型補入素養題"],
+              ["版本對照", "翰林、康軒、南一 B1-B6 單元索引可逐年調整"],
+              ["段考題庫", "每單元可新增基礎、進階、題組、手寫題"],
+              ["錯題追蹤", "依錯因標記：觀念不熟、題幹誤讀、計算錯誤"],
+            ].map(([type, title]) => (
+              <div key={title}>
+                <span>{type}</span>
+                <strong>{title}</strong>
+                <time>2026.10</time>
               </div>
             ))}
           </div>
@@ -418,9 +577,9 @@ export default function Home() {
       <footer>
         <img src="/jiawei-logo.png" alt="嘉偉 108 課綱複習平台" />
         <nav aria-label="頁尾導覽">
-          <a href="#practice">題庫練習</a>
+          <a href="#practice">單元題庫</a>
+          <a href="#quiz">立即作答</a>
           <a href="#exam">會考專區</a>
-          <a href="#books">B1-B6</a>
           <a href="#updates">年度更新</a>
         </nav>
         <p>Better Knowledge. Brighter Future.</p>
