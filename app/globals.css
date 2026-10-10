@@ -776,6 +776,89 @@ select {
   padding: 64px clamp(22px, 5vw, 76px);
 }
 
+.sources-section {
+  background: var(--paper);
+  padding: 64px clamp(22px, 5vw, 76px);
+}
+
+.source-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.source-card {
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  min-height: 230px;
+  padding: 24px;
+}
+
+.source-card span {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.source-card h3 {
+  font-size: 25px;
+  line-height: 1.25;
+  margin: 12px 0;
+}
+
+.source-card p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.source-card a,
+.import-actions a {
+  color: var(--cedar);
+  font-weight: 800;
+}
+
+.import-panel {
+  align-items: center;
+  background: #2f3b32;
+  border-radius: 8px;
+  color: var(--white);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr minmax(260px, 360px);
+  margin-top: 18px;
+  padding: 28px;
+}
+
+.import-panel p {
+  color: rgba(255, 253, 248, 0.72);
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.import-panel .eyebrow {
+  color: #e0c78f;
+}
+
+.import-panel h3 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.import-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.import-actions a {
+  background: rgba(255, 253, 248, 0.1);
+  border: 1px solid rgba(255, 253, 248, 0.18);
+  border-radius: 8px;
+  color: var(--white);
+  min-height: 48px;
+  padding: 13px 14px;
+}
+
 .quiz-board {
   display: grid;
   gap: 22px;
@@ -1067,6 +1150,7 @@ footer p {
 
   .subject-grid,
   .subject-rail,
+  .source-grid,
   .exam-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1129,6 +1213,8 @@ footer p {
   .choice-grid,
   .unit-title-row,
   .unit-browser-head,
+  .source-grid,
+  .import-panel,
   .exam-grid,
   .progress-panel,
   footer {

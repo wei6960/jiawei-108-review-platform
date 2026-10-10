@@ -33,6 +33,29 @@ type QuizItem = {
   tag: string;
 };
 
+const githubUrl = "https://github.com/wei6960/jiawei-108-review-platform";
+
+const publicSources = [
+  {
+    title: "國中教育會考官方歷屆試題",
+    publisher: "臺師大心測中心",
+    url: "https://cap.rcpet.edu.tw/examination.html",
+    note: "可索引年度題本與參考答案連結，全文匯入需確認再散布授權。",
+  },
+  {
+    title: "國中教育會考官方網站",
+    publisher: "臺師大心測中心",
+    url: "https://cap.rcpet.edu.tw/",
+    note: "追蹤最新公告、年度題本、計分說明、問與答等會考資訊。",
+  },
+  {
+    title: "自建段考題庫 CSV",
+    publisher: "嘉偉平台",
+    url: "/data/question-bank-template.csv",
+    note: "老師或學生可用模板新增單元題、解析、標籤與授權資訊。",
+  },
+];
+
 const books: { id: BookId; label: string; scope: string }[] = [
   { id: "B1", label: "七上", scope: "國一上段考基礎" },
   { id: "B2", label: "七下", scope: "國一下延伸應用" },
@@ -313,6 +336,7 @@ export default function Home() {
         <div className="navlinks">
           <a href="#practice">單元題庫</a>
           <a href="#quiz">立即作答</a>
+          <a href="#sources">公開題庫</a>
           <a href="#exam">會考專區</a>
           <a href="#updates">年度更新</a>
         </div>
@@ -324,11 +348,11 @@ export default function Home() {
           <p className="eyebrow">108 課綱複習平台</p>
           <h1>不只選科目，而是深入每一冊、每一個段考單元</h1>
           <p className="hero-text">
-            依版本、冊次、單元、題型與弱點標籤建立練習。學生可先看單元重點，再進入題庫作答、看解析、整理錯題，適合段考前逐單元複習。
+            依版本、冊次、單元、題型與弱點標籤建立練習。學生可先看單元重點，再進入題庫作答、看解析、整理錯題；題庫採公開格式，大家都能一起補題。
           </p>
           <div className="hero-actions">
             <a className="primary-action" href="#practice">選擇單元</a>
-            <a className="secondary-action" href="#quiz">開始作答</a>
+            <a className="secondary-action" href={githubUrl}>GitHub 共編</a>
           </div>
           <div className="hero-stats" aria-label="平台內容摘要">
             <span><strong>9</strong> 科題庫</span>
@@ -521,6 +545,38 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="sources-section" id="sources">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Open Question Bank</p>
+            <h2>公開題庫來源與匯入</h2>
+          </div>
+          <p>平台會優先使用官方公開資料、自建題與明確授權內容。商業題庫、登入後資料、付費內容或未授權教材，只建立來源索引，不搬運全文。</p>
+        </div>
+        <div className="source-grid">
+          {publicSources.map((source) => (
+            <article className="source-card" key={source.title}>
+              <span>{source.publisher}</span>
+              <h3>{source.title}</h3>
+              <p>{source.note}</p>
+              <a href={source.url}>開啟來源</a>
+            </article>
+          ))}
+        </div>
+        <div className="import-panel">
+          <div>
+            <p className="eyebrow">Question Format</p>
+            <h3>題庫欄位已標準化</h3>
+            <p>每題包含來源、授權、年份、冊次、版本、科目、單元、題目、選項、答案、解析與標籤。之後要抓官方公開連結、老師批次上題、學生投稿，都走同一套資料格式。</p>
+          </div>
+          <div className="import-actions">
+            <a href="/data/question-bank-template.csv">下載 CSV 模板</a>
+            <a href="/data/question-bank.json">查看示範題庫 JSON</a>
+            <a href={githubUrl}>到 GitHub 貢獻題目</a>
+          </div>
+        </div>
+      </section>
+
       <section className="exam-section" id="exam">
         <div className="section-heading">
           <div>
@@ -579,6 +635,7 @@ export default function Home() {
         <nav aria-label="頁尾導覽">
           <a href="#practice">單元題庫</a>
           <a href="#quiz">立即作答</a>
+          <a href="#sources">公開題庫</a>
           <a href="#exam">會考專區</a>
           <a href="#updates">年度更新</a>
         </nav>

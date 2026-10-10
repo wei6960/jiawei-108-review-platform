@@ -1,0 +1,40 @@
+{
+  "updated": "2026-10-10",
+  "policy": "Only index public, official, or explicitly permitted materials. Do not bypass login, paywalls, rate limits, robots.txt, or copyright controls.",
+  "sources": [
+    {
+      "id": "cap-official-exams",
+      "title": "國中教育會考官方歷屆試題",
+      "publisher": "國立臺灣師範大學心理與教育測驗研究發展中心",
+      "url": "https://cap.rcpet.edu.tw/examination.html",
+      "use": "Link/index official past exam PDFs and answer PDFs. Import full text only when redistribution terms are confirmed.",
+      "subjects": ["國文", "英語", "數學", "自然", "社會", "寫作"]
+    },
+    {
+      "id": "cap-official-home",
+      "title": "國中教育會考官方網站最新消息",
+      "publisher": "國立臺灣師範大學心理與教育測驗研究發展中心",
+      "url": "https://cap.rcpet.edu.tw/",
+      "use": "Track annual announcements, question-book releases, scoring notes, and Q&A PDFs.",
+      "subjects": ["會考資訊", "年度更新"]
+    }
+  ],
+  "importFormat": {
+    "requiredFields": [
+      "id",
+      "source",
+      "license",
+      "year",
+      "book",
+      "version",
+      "subject",
+      "unit",
+      "difficulty",
+      "type",
+      "prompt",
+      "answer",
+      "explanation"
+    ],
+    "optionalFields": ["grade", "topic", "choice_a", "choice_b", "choice_c", "choice_d", "tags"]
+  }
+}

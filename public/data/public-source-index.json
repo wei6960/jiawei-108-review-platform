@@ -1,0 +1,21 @@
+{
+  "updated": "2026-10-10T05:22:08.255Z",
+  "index": [
+    {
+      "sourceId": "cap-official-exams",
+      "title": "國中教育會考官方歷屆試題",
+      "url": "https://cap.rcpet.edu.tw/examination.html",
+      "fetchedAt": "2026-10-10T05:22:08.219Z",
+      "status": 200,
+      "files": []
+    },
+    {
+      "sourceId": "cap-official-home",
+      "title": "國中教育會考官方網站最新消息",
+      "url": "https://cap.rcpet.edu.tw/",
+      "fetchedAt": "2026-10-10T05:22:08.255Z",
+      "status": 200,
+      "files": []
+    }
+  ]
+}

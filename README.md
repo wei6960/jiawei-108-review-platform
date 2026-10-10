@@ -1,100 +1,77 @@
-# vinext-starter
+# 嘉偉 108 課綱複習平台
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+國中三年 B1-B6 單元題庫、段考練習、會考複習與年度更新平台。
 
-## Prerequisites
+Live site: https://jiawei-108-review-platform.wweden4.chatgpt.site
 
-- Node.js `>=22.13.0`
+## 功能
 
-## Quick Start
+- 九科題庫架構：國文、英文、數學、生物、理化、歷史、地理、公民、地科
+- B1-B6 冊次切換與各冊單元拆解
+- 各單元包含學習目標、子技能、題型配置、段考策略
+- 可作答、交卷、看解析、重練
+- 公開題庫來源索引與自建題庫 CSV 匯入
+- 年度會考趨勢與版本更新欄位
+
+## 題庫資料
+
+目前採「合法可維護」策略：
+
+- 自建題、老師投稿題、明確授權題：可匯入全文。
+- 官方公開會考題：先建立來源索引與連結；若要把全文放進平台，需確認再散布授權。
+- 商業題庫、登入後內容、付費教材、未授權解析：不抓取、不搬運、不繞過限制。
+
+公開來源清單：
+
+- `public/data/public-sources.json`
+- 官方會考歷屆試題入口：https://cap.rcpet.edu.tw/examination.html
+- 官方會考網站：https://cap.rcpet.edu.tw/
+
+題庫模板：
+
+- `public/data/question-bank-template.csv`
+- 轉換後範例：`public/data/question-bank.json`
+
+## 新增題目
+
+1. 複製 `public/data/question-bank-template.csv`
+2. 填入題目、答案、解析、來源與授權
+3. 執行：
+
+```bash
+npm run questions:import -- path/to/questions.csv public/data/question-bank.json
+```
+
+CSV 欄位：
+
+```text
+id,source,license,year,grade,book,version,subject,unit,topic,difficulty,type,prompt,choice_a,choice_b,choice_c,choice_d,answer,explanation,tags
+```
+
+## 索引公開來源
+
+只會讀取公開頁面上的檔案連結，不繞過登入、付費牆或網站限制。
+
+```bash
+npm run sources:index
+```
+
+輸出：
+
+```text
+public/data/public-source-index.json
+```
+
+## 開發
+
+需要 Node.js `>=22.13.0`。
 
 ```bash
 npm install
 npm run dev
-npm run build
+npm test
 ```
 
-This starter does not use `wrangler.jsonc`.
+## 授權注意
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+本 repo 的程式碼可公開協作。題庫內容必須逐題保留 `source` 與 `license`，避免混入來源不明或未授權內容。

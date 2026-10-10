@@ -1,0 +1,4 @@
+id,source,license,year,grade,book,version,subject,unit,topic,difficulty,type,prompt,choice_a,choice_b,choice_c,choice_d,answer,explanation,tags
+sample-math-b1-001,self-authored,CC-BY-4.0,2026,7,B1,通用,數學,一元一次方程式,移項與等量公理,基礎,單選題,解一元一次方程式時，等號兩邊同加同減的依據是什麼？,分配律,等量公理,交換律,畢氏定理,B,等量公理表示等號兩邊做相同運算，等式仍成立。,"段考;觀念;B1"
+sample-science-b3-001,self-authored,CC-BY-4.0,2026,8,B3,通用,理化,化學反應,質量守恆,中等,單選題,密閉容器中反應前後總質量不變，最能說明哪個概念？,能量守恆,質量守恆,反應速率,酸鹼中和,B,密閉系統中物質不會憑空產生或消失，反應前後總質量相同。,"段考;實驗;B3"
+sample-social-b5-001,self-authored,CC-BY-4.0,2026,9,B5,通用,公民,法律責任,民事與刑事責任,會考,單選題,某人破壞他人物品需賠償損害，主要屬於哪一類責任？,民事責任,刑事責任,行政責任,政治責任,A,損害賠償是民事責任常見處理方式，刑事責任則重在處罰犯罪行為。,"會考;案例;B5"
