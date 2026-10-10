@@ -420,6 +420,69 @@ h1 {
   width: 32px;
 }
 
+.quiz-setup {
+  align-items: end;
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(260px, 1fr) minmax(210px, 0.7fr) auto;
+  margin-top: 22px;
+  padding: 20px;
+}
+
+.quiz-setup label,
+.quiz-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.quiz-setup label {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.quiz-setup select {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  min-height: 48px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.quiz-meta {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.quiz-meta strong {
+  color: var(--ink);
+  font-size: 22px;
+}
+
+.quiz-error {
+  background: #f6ded7;
+  border: 1px solid rgba(187, 114, 93, 0.36);
+  border-radius: 8px;
+  color: #7d392c;
+  margin: 16px 0 0;
+  padding: 14px;
+}
+
+.muted-note {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 14px 0 0;
+}
+
+.answer-status {
+  color: var(--green);
+}
+
 .practice-deep-layout {
   align-items: start;
   display: grid;

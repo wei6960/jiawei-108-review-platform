@@ -23,14 +23,14 @@ async function render() {
   );
 }
 
-test("server-renders the deep unit review platform", async () => {
+test("server-renders the real question-bank review platform", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /<title>嘉偉 108 課綱複習平台<\/title>/i);
-  assert.match(html, /深入每一冊/);
+  assert.match(html, /60,297/);
   assert.match(html, /單元題庫練習/);
   assert.match(html, /立即作答/);
   assert.match(html, /看解析/);
@@ -42,7 +42,7 @@ test("server-renders the deep unit review platform", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("contains subject, book, unit, and quiz data for real practice", async () => {
+test("contains imported-bank random quiz behavior", async () => {
   const [page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -57,11 +57,12 @@ test("contains subject, book, unit, and quiz data for real practice", async () =
     assert.match(page, new RegExp(book));
   }
 
-  for (const feature of ["makeQuiz", "targets", "questionCount", "showAnalysis", "錯題", "段考"]) {
+  for (const feature of ["fetch", "startRandomQuiz", "chooseAnswer", "importedStats", "25", "錯題", "段考"]) {
     assert.match(page, new RegExp(feature));
   }
 
+  assert.doesNotMatch(page, /makeQuiz|showAnalysis|示範題/);
   assert.match(layout, /lang="zh-Hant-TW"/);
-  assert.match(layout, /單元題庫、段考練習/);
+  assert.match(layout, /嘉偉 108 課綱複習平台/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });
