@@ -33,7 +33,7 @@ Live site: https://jiawei-108-review-platform.wweden4.chatgpt.site
 - 轉換後範例：`public/data/question-bank.json`
 - Drive 索引：`public/data/drive-question-bank-index.json`
 - 已解析題庫摘要：`public/data/imported-drive-summary.json`
-- 已解析完整題庫：`public/data/imported-drive-questions.json`
+- 已解析完整題庫：`public/data/imported/kangxuan-*.json`
 
 ## 新增題目
 
@@ -102,6 +102,14 @@ npm run drive:extract-mdb
 - 國文：11,974 題
 - 數學：14,417 題
 - 合計：60,297 題
+
+為了避免單一 JSON 檔過大，完整題庫已依科目切檔：
+
+- `public/data/imported/kangxuan-自然.json`
+- `public/data/imported/kangxuan-社會.json`
+- `public/data/imported/kangxuan-英文.json`
+- `public/data/imported/kangxuan-國文.json`
+- `public/data/imported/kangxuan-數學.json`
 
 ## 開發
 

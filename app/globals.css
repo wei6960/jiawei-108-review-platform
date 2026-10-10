@@ -866,10 +866,11 @@ select {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.imported-stat-grid div {
+.imported-stat-grid a {
   background: #f2eadc;
   border: 1px solid var(--line);
   border-radius: 8px;
+  color: var(--ink);
   min-height: 78px;
   padding: 12px;
 }

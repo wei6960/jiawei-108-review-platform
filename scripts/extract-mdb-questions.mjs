@@ -3,6 +3,7 @@ import MDBReader from "mdb-reader";
 
 const manifestPath = process.argv[2] ?? "work/drive-mdb/manifest.json";
 const outputPath = process.argv[3] ?? "public/data/imported-drive-questions.json";
+const splitDir = process.env.IMPORT_SPLIT_DIR;
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
 const subjectMap = [
@@ -150,5 +151,30 @@ await writeFile(
   }, null, 2)}\n`,
   "utf8",
 );
+
+if (splitDir) {
+  const grouped = new Map();
+  for (const item of items) {
+    const key = item.subject || "未分類";
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(item);
+  }
+
+  const files = [];
+  await import("node:fs/promises").then(({ mkdir }) => mkdir(splitDir, { recursive: true }));
+  for (const [subject, subjectItems] of grouped) {
+    const filePath = `${splitDir}/kangxuan-${subject}.json`;
+    await writeFile(filePath, `${JSON.stringify({
+      updated: new Date().toISOString(),
+      source: "Google Drive publisher question-bank MDB files",
+      license: "user-authorized",
+      subject,
+      count: subjectItems.length,
+      items: subjectItems,
+    }, null, 2)}\n`, "utf8");
+    files.push({ subject, count: subjectItems.length, path: filePath });
+  }
+  console.log(`Wrote ${files.length} split files to ${splitDir}`);
+}
 
 console.log(`Extracted ${items.length} questions to ${outputPath}`);

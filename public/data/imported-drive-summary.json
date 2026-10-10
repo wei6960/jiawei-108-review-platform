@@ -697,5 +697,37 @@
         "3-1　植物的運輸構造"
       ]
     }
+  ],
+  "files": [
+    {
+      "subject": "自然",
+      "count": 9231,
+      "path": "/data/imported/kangxuan-自然.json",
+      "bytes": 11139422
+    },
+    {
+      "subject": "社會",
+      "count": 18331,
+      "path": "/data/imported/kangxuan-社會.json",
+      "bytes": 23631922
+    },
+    {
+      "subject": "英文",
+      "count": 6344,
+      "path": "/data/imported/kangxuan-英文.json",
+      "bytes": 7695286
+    },
+    {
+      "subject": "國文",
+      "count": 11974,
+      "path": "/data/imported/kangxuan-國文.json",
+      "bytes": 14590343
+    },
+    {
+      "subject": "數學",
+      "count": 14417,
+      "path": "/data/imported/kangxuan-數學.json",
+      "bytes": 12602306
+    }
   ]
 }

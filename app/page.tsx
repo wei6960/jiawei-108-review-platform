@@ -70,11 +70,11 @@ const driveSummaries = [
 ];
 
 const importedStats = [
-  { subject: "自然", count: 9231 },
-  { subject: "社會", count: 18331 },
-  { subject: "英文", count: 6344 },
-  { subject: "國文", count: 11974 },
-  { subject: "數學", count: 14417 },
+  { subject: "自然", count: 9231, url: "/data/imported/kangxuan-自然.json" },
+  { subject: "社會", count: 18331, url: "/data/imported/kangxuan-社會.json" },
+  { subject: "英文", count: 6344, url: "/data/imported/kangxuan-英文.json" },
+  { subject: "國文", count: 11974, url: "/data/imported/kangxuan-國文.json" },
+  { subject: "數學", count: 14417, url: "/data/imported/kangxuan-數學.json" },
 ];
 
 const books: { id: BookId; label: string; scope: string }[] = [
@@ -606,10 +606,10 @@ export default function Home() {
           </div>
           <div className="imported-stat-grid">
             {importedStats.map((item) => (
-              <div key={item.subject}>
+              <a href={item.url} key={item.subject}>
                 <strong>{item.count.toLocaleString("zh-TW")}</strong>
                 <span>{item.subject}</span>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -624,7 +624,8 @@ export default function Home() {
             <a href="/data/question-bank.json">查看示範題庫 JSON</a>
             <a href="/data/drive-question-bank-index.json">查看 Drive 索引 JSON</a>
             <a href="/data/imported-drive-summary.json">查看匯入摘要 JSON</a>
-            <a href="/data/imported-drive-questions.json">下載完整 60,297 題 JSON</a>
+            <a href="/data/imported/kangxuan-自然.json">下載康軒自然 JSON</a>
+            <a href="/data/imported/kangxuan-社會.json">下載康軒社會 JSON</a>
             <a href={githubUrl}>到 GitHub 貢獻題目</a>
           </div>
         </div>
